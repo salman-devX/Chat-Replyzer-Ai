@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  chat-replyzer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chat_replyzer_ai
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - CLIENT_URL=http://localhost:5000
+      - MONGODB_URI=${MONGODB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - ENCRYPTION_SECRET_KEY=${ENCRYPTION_SECRET_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - AI_API_KEY=${AI_API_KEY}
+      - AI_MODEL=${AI_MODEL:-gemini-1.5-flash}
+    volumes:
+      # Persistent storage so WhatsApp linked devices and multi-user sessions survive container restarts
+      - wa_auth_data:/app/server/wa_auth
+      - wa_sessions_data:/app/server/wa_sessions
+
+volumes:
+  wa_auth_data:
+  wa_sessions_data:
